@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using aspnetcore.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 
 namespace aspnetcore.Controllers
@@ -14,34 +10,33 @@ namespace aspnetcore.Controllers
         // GET: Tool
         public ActionResult Index()
         {
-            ViewBag.value = string.Empty;
-            ViewBag.type = string.Empty;
-            return View();
+            var model = new ToolViewModel();
+            return View(model);
         }
 
-        // GET: Tool/Details/5
-        public ActionResult Convert(string value, string type)
+        // POST: Tool
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Index(ToolViewModel model)
         {
-            ViewBag.value = type;
-            ViewBag.type = type;
-
-            switch (type)
+            switch (model.ConvertType)
             {
-                case "urlencode":
-                    ViewBag.result = WebUtility.UrlEncode(value);
+                case ConvertType.UrlEncode:
+                    model.Result = WebUtility.UrlEncode(model.Value);
                     break;
-                case "urldecode":
-                    ViewBag.result = WebUtility.UrlDecode(value);
+                case ConvertType.UrlDecode:
+                    model.Result = WebUtility.UrlDecode(model.Value);
                     break;
-                case "htmlencode":
-                    ViewBag.result = WebUtility.HtmlEncode(value);
+                case ConvertType.HtmlEncode:
+                    model.Result = WebUtility.HtmlEncode(model.Value);
                     break;
-                case "htmldecode":
-                    ViewBag.result = WebUtility.HtmlDecode(value);
+                case ConvertType.HtmlDocode:
+                    model.Result = WebUtility.HtmlDecode(model.Value);
                     break;
             }
+            ModelState.Clear();
 
-            return View("Index");
+            return View(model);
         }
 
         // GET: Tool/Create
